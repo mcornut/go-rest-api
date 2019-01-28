@@ -1,0 +1,14 @@
+# HTTP Server
+[http]
+host = "localhost"
+port = 8080
+
+[db]
+host = "locahost"
+port = "5432"
+name = "matthieu"
+username = "matthieu"
+password = ""
+
+[app]
+document_max_size = 2
