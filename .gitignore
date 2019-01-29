@@ -2,4 +2,6 @@ go-rest-api
 coverage.out
 vendor
 uploads/
+tmp/
 .DS_Store
+local.toml

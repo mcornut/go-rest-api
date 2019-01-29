@@ -11,6 +11,9 @@ import (
 	"github.com/mcornut/go-rest-api/utils/database"
 )
 
+//go:generate mockery -name DocumentController -dir ./controllers
+//go:generate mockery -name DocumentRepository -dir ./repositories
+
 func formatLog() {
 	Formatter := new(log.TextFormatter)
 	Formatter.TimestampFormat = "02-01-2006 15:04:05"

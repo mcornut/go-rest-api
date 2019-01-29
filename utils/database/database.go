@@ -9,7 +9,6 @@ import (
 
 // Connect func
 func Connect(user, password, dbname, host, port string) (*sql.DB, error) {
-	connStr := fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%s",
-		user, password, dbname, host, port)
+	connStr := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable", host, port, user, dbname)
 	return sql.Open("postgres", connStr)
 }

@@ -6,6 +6,11 @@ import (
 	"github.com/mcornut/go-rest-api/models"
 )
 
+type DocumentRepository interface {
+	CreateDocument(db *sql.DB, name, filePath, thumbPath string) (int, error)
+	GetDocuments(db *sql.DB, page, resultsPerPage int) ([]*models.Document, error)
+}
+
 // CreateDocument func
 func CreateDocument(db *sql.DB, name, filePath, thumbPath string) (int, error) {
 	const query = `

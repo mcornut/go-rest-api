@@ -6,7 +6,7 @@ import (
 
 // DBConfiguration struct
 type DBConfiguration struct {
-	Host     string `toml:"port"`
+	Host     string `toml:"host"`
 	Name     string `toml:"name"`
 	Password string `toml:"password"`
 	Port     string `toml:"port"`
