@@ -16,6 +16,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/mcornut/go-rest-api/repositories"
 	"github.com/mcornut/go-rest-api/requests"
+	"gopkg.in/gographics/imagick.v2/imagick"
 )
 
 const uploadPath = "./uploads"
@@ -191,8 +192,19 @@ func downloadPDFFile(filepath string, url string) (string, error) {
 	err = cutAndPaste(tempPath, pdfPath)
 	if err != nil {
 		log.Error(err)
+		os.Remove(tempPath)
 		return "", errors.New("Internal server error")
 	}
+
+	// TODO
+	err = convertPdfToJpg(pdfPath, "test.jpg")
+	if err != nil {
+		log.Error(err)
+		os.Remove(pdfPath)
+		return "", errors.New("Internal server error")
+	}
+
+	os.Remove(tempPath)
 
 	return pdfPath, nil
 }
@@ -253,4 +265,47 @@ func cutAndPaste(src, dst string) error {
 	}
 
 	return os.Remove(src)
+}
+
+func convertPdfToJpg(pdfName string, imageName string) error {
+
+	imagick.Initialize()
+	defer imagick.Terminate()
+
+	mw := imagick.NewMagickWand()
+	defer mw.Destroy()
+
+	if err := mw.SetResolution(300, 300); err != nil {
+		return err
+	}
+
+	// Load the image file into imagick
+	if err := mw.ReadImage(pdfName); err != nil {
+		return err
+	}
+
+	// Must be *after* ReadImageFile
+	// Flatten image and remove alpha channel, to prevent alpha turning black in jpg
+	if err := mw.SetImageAlphaChannel(imagick.ALPHA_CHANNEL_FLATTEN); err != nil {
+		return err
+	}
+
+	// Set any compression (100 = max quality)
+	if err := mw.SetCompressionQuality(95); err != nil {
+		return err
+	}
+
+	// Select only first page of pdf
+	mw.SetIteratorIndex(0)
+
+	// Convert into JPG
+	if err := mw.SetFormat("jpg"); err != nil {
+		return err
+	}
+
+	// Resize image
+	mw.ResizeImage(100, 150, imagick.FILTER_SINC, 1)
+
+	// Save File
+	return mw.WriteImage(imageName)
 }
